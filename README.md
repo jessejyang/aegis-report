@@ -1,3 +1,8 @@
+[![NPM version](https://img.shields.io/npm/v/wardjs-report.svg?style=flat)](https://www.npmjs.org/package/wardjs-report)
+[![npm download](https://img.shields.io/npm/dm/wardjs-report.svg?style=flat-square)](https://npmjs.org/package/wardjs-report)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/iv-web/wardjs-report/blob/master/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/iv-web/wardjs-report/pulls)
+
 
 ## wardjs-report
 
