@@ -121,6 +121,10 @@ webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://gi
 
 前端性能监控使用 [performance.timing](https://developer.mozilla.org/zh-CN/docs/Web/API/Performance)。// @todo
 
+## 数据上报
+
+默认使用 [navigator.sendBeacon](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon) 上报数据，异步上报，不会因浏览器页面的卸载而影响上报数据，对于不兼容 sendBeacon 的浏览器，使用 Image 上报的方式。
+
 
 ## Build
 
