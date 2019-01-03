@@ -84,8 +84,8 @@ const wardjs = new WardjsReport({
 })
 ```
 
-1. offlineLog 表示开启离线日志，即将用户日志存储在 IndexDB 中
-2. offlineLogAuto 表示每次页面刷新的时候主动询问服务器时候上传离线日志
+1. offlineLog 表示开启离线日志，将用户日志存储在 IndexDB 中
+2. offlineLogAuto 表示每次页面刷新的时候主动询问服务器是否上传离线日志
 
 - 打开 badjs 离线日志页面 http://badjs2.ivweb.io/user/offlinelog.html
 
@@ -97,7 +97,6 @@ const wardjs = new WardjsReport({
 - 刷新项目页面（如果是mobile app则需要重新进入页面）
 
 再次回到 badjs 离线日志页面，在右边栏选择对应的离线日志即可预览了，日志的过滤条件（消息类型，关键词）依然有效。
-
 
 
 ## wardjs-report 原理
