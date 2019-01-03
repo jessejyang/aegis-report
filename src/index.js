@@ -1,6 +1,7 @@
 import getOfflineDB from './offline/index'
 import { isOBJ, isOBJByType, processStackMsg, processError, extend } from './utils/index'
-import Log from './utils/Log'
+import Log from './log/index'
+import sendBadjs from './report'
 
 let logList = []
 
@@ -55,7 +56,7 @@ export default class WardjsReport {
                 // '&from=' + encodeURIComponent(location.href) +
                 '&'
             // pv
-            new Image().src = '//now.qq.com/badjs/' + id
+            sendBadjs(`//now.qq.com/badjs/${id}`)
         }
         for (const key in _config) {
             this[key] = _config[key]

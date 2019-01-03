@@ -1,5 +1,6 @@
 import { isOBJ, isEmpty, isRepeat, isOBJByType } from '../utils/index'
 import getOfflineDB from '../offline/index'
+import sendBadjs from '../report'
 
 let submitLogList = []
 let comboTimeout = 0
@@ -14,7 +15,7 @@ const submitLog = function (config) {
     const _url = config._reportUrl + submitLogList.join('&') +
         '&count=' + submitLogList.length + '&_t=' + (+new Date())
 
-    new Image().src = _url
+    sendBadjs(_url)
 
     comboTimeout = 0
     submitLogList = []
