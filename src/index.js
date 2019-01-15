@@ -9,6 +9,7 @@ const _config = {
     id: 0, // 上报 id
     uin: 0, // user id
     url: '//now.qq.com/badjs', // 上报接口
+    version: 0,
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
     ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
@@ -53,6 +54,7 @@ export default class WardjsReport {
             _config._reportUrl = (this.url || '//now.qq.com/badjs') +
                 '?id=' + id +
                 '&uin=' + _config.uin +
+                '&version=' + _config.version +
                 // '&from=' + encodeURIComponent(location.href) +
                 '&'
             // pv
