@@ -48,6 +48,7 @@ const wardjs = new WardjsReport({
 | --- | --- | --- | 
 | id | 0 | 上报id |
 | uin | 0 |  user id |
+| version | 0 | 上报版本号 |
 | url | '//now.qq.com/badjs' | 上报接口 |
 | ext | null |  扩展参数 用于自定义上报 |
 | level | 4 |  错误级别 1-debug 2-info 4-error |
