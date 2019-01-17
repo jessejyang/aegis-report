@@ -116,6 +116,9 @@ webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://gi
 
 通过封装 IndexDB 存储用户全部日志，包括对日志的过期处理以及上传操作。具体实现可以查看 `src/Offline.js`。
 
+### 延迟上报
+
+默认时间为 1s，延迟上报可以理解为函数节流，将多次上报合为一次上报。
 
 ### 前端性能监控
 
@@ -129,6 +132,13 @@ webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://gi
 ## Build
 
 rollup 打包，支持 tree-shaking，打包后体积只有 8k，是 badjs-report 体积的 1/3。
+
+## Example
+
+example 使用说明
+
+badjs 虽然实现了跨域，但是 badjs 服务器对域名限制（业务申请中填写业务 url），所以使用 example 需要使用代理机制。
+
 
 ## License
 

@@ -129,10 +129,10 @@ export default class Log {
             console.log('report offline log success')
             setTimeout(function () {
                 document.body.removeChild(iframe)
+                iframe = null
             }, 5000)
 
             iframe.onload = null
-            iframe = null
         }
         document.body.appendChild(iframe)
     }

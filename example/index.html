@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>example</title>
+    <script src="../dist/index.js"></script>
+</head>
+<body>
+<script>
+    const WardjsReport = window['wardjs-report'].default
+    const wardjs = new WardjsReport({
+        url: '//now.qq.com/badjs',
+        id: 453,
+        version: 3,
+        uin: '380034641',
+        offlineLog: true,
+        offlineLogAuto: true,
+        delay: 3000
+    })
+    wardjs.info('info')
+    wardjs.debug('debug')
+    wardjs.report('error')
+    wardjs.addOfflineLog('offline log', Date.now())
+    wardjs.addOfflineLog('offline log', Date.now())
+    wardjs.reportOfflineLog()
+
+</script>
+
+</body>
+</html>

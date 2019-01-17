@@ -14,7 +14,7 @@ const _config = {
     level: 4, // 错误级别 1-debug 2-info 4-error
     ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
     random: 1, // 抽样 (0-1] 1-全量
-    delay: 1000, // 延迟上报 combo 为 true 时有效
+    delay: 1000, // 延迟上报
     submit: null, // 自定义上报方式
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: false,
@@ -42,8 +42,8 @@ export default class WardjsReport {
         const id = parseInt(_config.id, 10)
         if (id) {
             if (/qq\.com$/gi.test(location.hostname)) {
-                if (!this.url) {
-                    this.url = '//now.qq.com/badjs'
+                if (!_config.url) {
+                    _config.url = '//now.qq.com/badjs'
                 }
 
                 if (!_config.uin) {
@@ -51,14 +51,14 @@ export default class WardjsReport {
                 }
             }
 
-            _config._reportUrl = (this.url || '//now.qq.com/badjs') +
+            _config._reportUrl = (_config.url || '//now.qq.com/badjs') +
                 '?id=' + id +
                 '&uin=' + _config.uin +
                 '&version=' + _config.version +
                 // '&from=' + encodeURIComponent(location.href) +
                 '&'
             // pv
-            sendBadjs(`//now.qq.com/badjs/${id}`)
+            sendBadjs(`${_config.url}/${id}`)
         }
         for (const key in _config) {
             this[key] = _config[key]
