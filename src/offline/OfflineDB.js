@@ -123,7 +123,7 @@ export default class OfflineDB {
     }
 
     save2Offline (key, msgObj, config) {
-        msgObj = extend({ id: config.id, uin: config.uin, time: new Date() - 0 }, msgObj)
+        msgObj = extend({ id: config.id, uin: config.uin, time: new Date() - 0, version: config.version }, msgObj)
         if (this.db) {
             this.insertToDB(msgObj)
             return
