@@ -60,6 +60,9 @@ const wardjs = new WardjsReport({
 | offlineLog | false | 是否开启离线日志 |
 | offlineLogExp | 5 |  离线日志过期时间，默认5天 |
 | offlineLogAuto | false | 是否自动询问服务器需要自动上报 |
+| onReport | function (bid, reportLog) {} | 与上报同时触发，用于统计相关内容 |
+| beforeReport | function (reportLog) {} | AOP：上报前执行，如果返回 false 则此条信息不上报 |
+
 
 ### 上报接口
 

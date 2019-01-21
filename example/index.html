@@ -15,14 +15,21 @@
         uin: '380034641',
         offlineLog: true,
         offlineLogAuto: true,
-        delay: 3000
+        delay: 3000,
+        onReport: function (bid, reportLog) {
+            console.log(bid, reportLog);
+        },
+        beforeReport: function (reportLog) {
+            console.log(reportLog)
+            return true
+        }
     })
     wardjs.info('info')
     wardjs.debug('debug')
     wardjs.report('error')
-    wardjs.addOfflineLog('offline log', Date.now())
-    wardjs.addOfflineLog('offline log', Date.now())
-    wardjs.reportOfflineLog()
+    wardjs.addOfflineLog('offline log' + Date.now())
+    wardjs.addOfflineLog('offline log' + Date.now())
+    // wardjs.reportOfflineLog()
 
 </script>
 

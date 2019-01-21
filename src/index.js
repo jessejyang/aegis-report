@@ -19,7 +19,12 @@ const _config = {
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: false,
     offlineLogExp: 5, // 离线日志过期时间，默认5天
-    offlineLogAuto: false // 是否自动询问服务器需要自动上报
+    offlineLogAuto: false, // 是否自动询问服务器需要自动上报
+    onReport: () => {
+    }, // 与上报同时触发，用于统计相关内容
+    beforeReport: () => {
+        return true
+    } // aop：上报前执行，如果返回 false 则不上报
 }
 
 export default class WardjsReport {
