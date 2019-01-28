@@ -1,6 +1,6 @@
 import { isOBJ, isEmpty, isRepeat, isOBJByType } from '../utils/index'
 import getOfflineDB from '../offline/index'
-import sendBadjs from '../report'
+import send from '../report'
 
 let submitLogList = []
 let comboTimeout = 0
@@ -15,7 +15,7 @@ const submitLog = function (config) {
     const _url = config._reportUrl + submitLogList.join('&') +
         '&count=' + submitLogList.length + '&_t=' + (+new Date())
 
-    sendBadjs(_url)
+    send(_url)
 
     comboTimeout = 0
     submitLogList = []

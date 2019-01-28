@@ -80,3 +80,13 @@ export function isRepeat (error, repeat) {
     const times = logMap[msg] = (parseInt(logMap[msg], 10) || 0) + 1
     return times > repeat
 }
+
+export function buildParam (obj) {
+    const str = []
+    for (const k in obj) {
+        if (obj.hasOwnProperty(k)) {
+            str.push(encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]))
+        }
+    }
+    return str.join('&')
+}

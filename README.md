@@ -54,11 +54,12 @@ const wardjs = new WardjsReport({
 | level | 4 |  错误级别 1-debug 2-info 4-error |
 | ignore | [] | 忽略某个错误, 支持 Regexp 和 Function |
 | random | 1 |  抽样 (0-1] 1-全量 |
+| monitorUrl | '//report.url.cn/report/report_vm' | 自定义统计上报地址 | 
 | delay | 1000 |  延迟上报时间 |
 | submit | null |  自定义上报方式 |
 | repeat | 5 |  重复上报次数(对于同一个错误超过多少次不上报) |
 | offlineLog | false | 是否开启离线日志 |
-| offlineLogExp | 5 |  离线日志过期时间，默认5天 |
+| offlineLogExp | 3 |  离线日志过期时间，默认3天 |
 | offlineLogAuto | false | 是否自动询问服务器需要自动上报 |
 | onReport | function (bid, reportLog) {} | 与上报同时触发，用于统计相关内容 |
 | beforeReport | function (reportLog) {} | AOP：上报前执行，如果返回 false 则此条信息不上报 |
@@ -75,6 +76,11 @@ wardjs.addOfflineLog(msg)  // 增加离线日志
 wardjs.reportOfflineLog() // 上报离线日志
 ```
 
+### 自定义统计上报接口
+
+```javascript
+wardjs.monitor(123)
+```
 
 ### 离线日志用法
 
