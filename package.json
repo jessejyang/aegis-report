@@ -1,6 +1,6 @@
 {
   "name": "wardjs-report",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "ivweb wardmonitor client report",
   "main": "dist/index.js",
   "scripts": {
