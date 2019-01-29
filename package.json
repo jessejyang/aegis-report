@@ -7,6 +7,8 @@
     "publish": "npm version patch",
     "prebuild": "rimraf dist",
     "build": "rollup -c",
+    "build:web": "rollup -c --environment TARGET:web",
+    "build:wx": "rollup -c -w --environment TARGET:wx",
     "test": "babel-node test/index.js"
   },
   "dependencies": {},
@@ -21,6 +23,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "rimraf": "^2.6.2",
     "rollup": "^1.0.0",
+    "rollup-plugin-alias": "^1.5.1",
     "rollup-plugin-babel": "^4.1.0",
     "rollup-plugin-cleanup": "^3.0.0",
     "rollup-plugin-node-resolve": "^4.0.0",
