@@ -10,7 +10,11 @@ wardmonitor 日志上报:
 
 错误日志收集，实时日志监控，离线日志统计，前端性能监控 - 基于 badjs 升级的 wardjs-report 给你一站式前端日志监控体验。
 
-## Install 
+支持平台：
+- H5
+- 微信小程序
+
+## Install
 
 ```shell
 $ npm install wardjs-report
@@ -22,10 +26,17 @@ $ npm install wardjs-report
 
 ```javascript
 import WardjsReport from 'wardjs-report'
+// 小程序
+// import WardjsReport from 'wardjs-report/index.mp.js'
 
 const wardjs = new WardjsReport({id: 1})
 
 wardjs.report('error msg') // 主动上报
+
+// 更新参数
+wardjs.cfg({
+    uin: '542922817'
+})
 ```
 
 - browser
@@ -45,7 +56,7 @@ const wardjs = new WardjsReport({
 上报 id 需要去 badjs 服务申请
 
 | 参数名 | 默认值 | 简介 |
-| --- | --- | --- | 
+| --- | --- | --- |
 | id | 0 | 上报id |
 | uin | 0 |  user id |
 | version | 0 | 上报版本号 |
@@ -105,7 +116,7 @@ const wardjs = new WardjsReport({
 
 ## wardjs-report 原理
 
-### window.onerror 
+**H5: window.onerror**
 
 关于错误处理的部分是通过重新 window.onerror 实现的，记得在 script 中添加跨域脚本 crossorigin="anonymous" 以帮助 wardjs 捕获错误。
 
@@ -115,9 +126,19 @@ const wardjs = new WardjsReport({
 
 webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://github.com/liyincheng/html-webpack-inject-attributes-plugin)。
 
+**微信小程序: wx.onError**
+
+在微信小程序中，关于错误处理的部分是通过 `wx.onError` 实现的，由于 `wx.onError` 的限制，目前并不支持定位到错误发生的行和列以及堆栈信息。
+
 ### 离线日志
 
+**H5:**
+
 通过封装 IndexDB 存储用户全部日志，包括对日志的过期处理以及上传操作。具体实现可以查看 `src/Offline.js`。
+
+**微信小程序:**
+
+通过 Storage 储存用户全部日志。
 
 ### 延迟上报
 

@@ -30,7 +30,7 @@ function genConfig (name) {
             babel({
                 exclude: 'node_modules/**'
             }),
-            // uglify({}, minify),
+            uglify({}, minify),
             cleanup({
                 comments: 'none'
             }),
