@@ -54,7 +54,6 @@ const wardjs = new WardjsReport({
 | level | 4 |  错误级别 1-debug 2-info 4-error |
 | ignore | [] | 忽略某个错误, 支持 Regexp 和 Function |
 | random | 1 |  抽样 (0-1] 1-全量 |
-| monitorUrl | '//report.url.cn/report/report_vm' | 自定义统计上报地址 | 
 | delay | 1000 |  延迟上报时间 |
 | submit | null |  自定义上报方式 |
 | repeat | 5 |  重复上报次数(对于同一个错误超过多少次不上报) |
@@ -79,7 +78,7 @@ wardjs.reportOfflineLog() // 上报离线日志
 ### 自定义统计上报接口
 
 ```javascript
-wardjs.monitor(123)
+wardjs.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
 ```
 
 ### 离线日志用法

@@ -265,7 +265,7 @@ export default class WardjsReport {
     }
 
     // 用于统计上报
-    monitor (n) {
+    static monitor (n, monitorUrl = '//report.url.cn/report/report_vm') {
         // 如果n未定义或者为空，则不处理
         if (typeof n === 'undefined' || n === '') {
             return
@@ -281,10 +281,8 @@ export default class WardjsReport {
             _: Math.random()
         }
 
-        let url = this.monitorUrl
-
-        if (url) {
-            let _url = url + (url.match(/\?/) ? '&' : '?') + buildParam(p)
+        if (monitorUrl) {
+            let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p)
 
             send(_url)
         }
