@@ -77,8 +77,10 @@ wardjs.reportOfflineLog() // 上报离线日志
 
 ### 自定义统计上报接口
 
+注意此方法为静态方法，使用 WardjsReport 调用。
+
 ```javascript
-wardjs.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
+WardjsReport.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
 ```
 
 ### 离线日志用法
