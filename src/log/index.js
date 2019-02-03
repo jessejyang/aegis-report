@@ -111,7 +111,9 @@ export default class Log {
         iframe.width = 0
         iframe.src = 'javascript:false'
         let data = JSON.stringify({ logs, msgObj, userAgent, startDate, endDate, id, uin })
-        data = window.pako.deflate(data, { to: 'string' })
+        if (window.pako) {
+            data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
+        }
 
         iframe.onload = function () {
             const form = document.createElement('form')
@@ -123,7 +125,7 @@ export default class Log {
             input.style.display = 'none'
             input.type = 'hidden'
             input.name = 'offline_log'
-            input.value = encodeURIComponent(data)
+            input.value = data
 
             iframe.contentDocument.body.appendChild(form)
             form.appendChild(input)
