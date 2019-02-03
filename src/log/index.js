@@ -101,7 +101,7 @@ export default class Log {
         }
     }
 
-    reportOffline ({ logs, startDate, endDate }) {
+    reportOffline ({ logs, msgObj, startDate, endDate }) {
         let iframe = document.createElement('iframe')
         const { id, uin, url } = this.config
         const { userAgent } = navigator
@@ -110,6 +110,8 @@ export default class Log {
         iframe.height = 0
         iframe.width = 0
         iframe.src = 'javascript:false'
+        let data = JSON.stringify({ logs, msgObj, userAgent, startDate, endDate, id, uin })
+        data = window.pako.deflate(data, { to: 'string' })
 
         iframe.onload = function () {
             const form = document.createElement('form')
@@ -121,7 +123,7 @@ export default class Log {
             input.style.display = 'none'
             input.type = 'hidden'
             input.name = 'offline_log'
-            input.value = JSON.stringify({ logs, userAgent, startDate, endDate, id, uin })
+            input.value = encodeURIComponent(data)
 
             iframe.contentDocument.body.appendChild(form)
             form.appendChild(input)

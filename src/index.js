@@ -1,5 +1,5 @@
 import getOfflineDB from './offline/index'
-import { isOBJ, isOBJByType, processStackMsg, processError, extend, buildParam } from './utils/index'
+import { isOBJ, isOBJByType, processStackMsg, processError, extend, buildParam, loadPako } from './utils/index'
 import Log from './log/index'
 import send from './report'
 
@@ -240,12 +240,14 @@ export default class WardjsReport {
                 end: endDate,
                 id: _this.id,
                 uin: _this.uin
-            }, function (err, logs) {
+            }, function (err, logs, msgObj) {
                 if (err) {
                     console.error(err)
                     return
                 }
-                _this.log.reportOffline({ logs, startDate, endDate })
+                loadPako().then(() => {
+                    _this.log.reportOffline({ logs, msgObj, startDate, endDate })
+                })
             })
         })
     }

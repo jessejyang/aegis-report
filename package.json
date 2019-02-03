@@ -7,6 +7,7 @@
     "publish": "npm version patch",
     "prebuild": "rimraf dist",
     "build": "rollup -c",
+    "dev": "rollup -c -w",
     "test": "babel-node test/index.js"
   },
   "dependencies": {},

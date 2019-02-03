@@ -90,3 +90,17 @@ export function buildParam (obj) {
     }
     return str.join('&')
 }
+
+export function loadPako () {
+    if (window.pako) {
+        return Promise.resolve()
+    }
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = 'https://pub.idqqimg.com/29ee73ea8c294fce8498cb50503521d4.js'
+        script.crossOrigin = 'anonymous'
+        script.onload = resolve
+        script.onerror = reject
+        document.getElementsByTagName('head')[0].appendChild(script)
+    })
+}
