@@ -126,6 +126,8 @@ webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://gi
 
 通过封装 IndexDB 存储用户全部日志，包括对日志的过期处理以及上传操作。具体实现可以查看 `src/Offline.js`。
 
+离线日志使用 [pako](https://github.com/nodeca/pako) 进行压缩，由于 pako 模块较大，因为默认不加载，通过按需加载的方式引用，只有上报离线日志的时候才异步加载。
+
 ### 延迟上报
 
 默认时间为 1s，延迟上报可以理解为函数节流，将多次上报合为一次上报。
