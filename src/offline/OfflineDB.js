@@ -84,7 +84,10 @@ export default class OfflineDB {
         const result = []
         const msgObj = {}
         const msgList = []
+        const urlObj = {}
+        const urlList = []
         let num = 0
+        let num1 = 0
         request.onsuccess = function (event) {
             const cursor = event.target.result
             if (cursor && cursor.value) {
@@ -95,11 +98,15 @@ export default class OfflineDB {
                         msgList.push(msg)
                         msgObj[msg] = num++
                     }
-                    result.push({ from, level, msg: msgObj[msg], time, version })
+                    if (typeof urlObj[from] !== 'number') {
+                        urlList.push(from)
+                        urlObj[from] = num1++
+                    }
+                    result.push({ from: urlObj[from], level, msg: msgObj[msg], time, version })
                 }
                 cursor.continue()
             } else {
-                callback(null, result, msgList)
+                callback(null, result, msgList, urlList)
             }
         }
 

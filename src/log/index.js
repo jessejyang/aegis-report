@@ -101,7 +101,7 @@ export default class Log {
         }
     }
 
-    reportOffline ({ logs, msgObj, startDate, endDate }) {
+    reportOffline ({ logs, msgObj, urlObj, startDate, endDate }) {
         let iframe = document.createElement('iframe')
         const { id, uin, url } = this.config
         const { userAgent } = navigator
@@ -110,7 +110,7 @@ export default class Log {
         iframe.height = 0
         iframe.width = 0
         iframe.src = 'javascript:false'
-        let data = JSON.stringify({ logs, msgObj, userAgent, startDate, endDate, id, uin })
+        let data = JSON.stringify({ logs, msgObj, urlObj, userAgent, startDate, endDate, id, uin })
         if (window.pako) {
             data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
         }

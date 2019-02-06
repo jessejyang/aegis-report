@@ -240,13 +240,13 @@ export default class WardjsReport {
                 end: endDate,
                 id: _this.id,
                 uin: _this.uin
-            }, function (err, logs, msgObj) {
+            }, function (err, logs, msgObj, urlObj) {
                 if (err) {
                     console.error(err)
                     return
                 }
                 loadPako().then(() => {
-                    _this.log.reportOffline({ logs, msgObj, startDate, endDate })
+                    _this.log.reportOffline({ logs, msgObj, urlObj, startDate, endDate })
                 })
             })
         })
