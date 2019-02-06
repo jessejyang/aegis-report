@@ -111,7 +111,7 @@ export default class Log {
         iframe.width = 0
         iframe.src = 'javascript:false'
         let data = JSON.stringify({ logs, msgObj, urlObj, userAgent, startDate, endDate, id, uin })
-        if (window.pako) {
+        if (this.config.deflate && window.pako) {
             data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
         }
 

@@ -21,6 +21,7 @@ const _config = {
     offlineLog: false,
     offlineLogExp: 3, // 离线日志过期时间，默认3天
     offlineLogAuto: false, // 是否自动询问服务器需要自动上报
+    deflate: false, // 是否使用压缩算法
     onReport: () => {
     }, // 与上报同时触发，用于统计相关内容
     beforeReport: () => {
@@ -245,9 +246,14 @@ export default class WardjsReport {
                     console.error(err)
                     return
                 }
-                loadPako().then(() => {
-                    _this.log.reportOffline({ logs, msgObj, urlObj, startDate, endDate })
-                })
+                const reportData = { logs, msgObj, urlObj, startDate, endDate }
+                if (_this.deflate) {
+                    loadPako().then(() => {
+                        _this.log.reportOffline(reportData)
+                    })
+                } else {
+                    _this.log.reportOffline(reportData)
+                }
             })
         })
     }
