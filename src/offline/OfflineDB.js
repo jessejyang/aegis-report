@@ -102,7 +102,7 @@ export default class OfflineDB {
                         urlList.push(from)
                         urlObj[from] = num1++
                     }
-                    result.push({ from: urlObj[from], level, msg: msgObj[msg], time, version })
+                    result.push({ f: urlObj[from], l: level, m: msgObj[msg], t: time, v: version })
                 }
                 cursor.continue()
             } else {
