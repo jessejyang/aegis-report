@@ -15,6 +15,7 @@ const _config = {
     ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
     random: 1, // 抽样 (0-1] 1-全量
     delay: 1000, // 延迟上报
+    maxLength: 500, // 每条日志内容最大长度，通常不建议修改
     submit: null, // 自定义上报方式
     monitorUrl: '//report.url.cn/report/report_vm', // 自定义统计上报地址
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),

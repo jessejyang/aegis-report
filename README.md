@@ -55,6 +55,7 @@ const wardjs = new WardjsReport({
 | ignore | [] | 忽略某个错误, 支持 Regexp 和 Function |
 | random | 1 |  抽样 (0-1] 1-全量 |
 | delay | 1000 |  延迟上报时间 |
+| maxLength | 500 | 每条日志默认长度（不建议修改） |
 | submit | null |  自定义上报方式 |
 | repeat | 5 |  重复上报次数(对于同一个错误超过多少次不上报) |
 | offlineLog | false | 是否开启离线日志 |

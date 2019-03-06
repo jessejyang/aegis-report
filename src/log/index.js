@@ -70,7 +70,7 @@ export default class Log {
             }
 
             // 有效保证字符不要过长
-            reportLog.msg = (reportLog.msg + '' || '').substr(0, 500)
+            reportLog.msg = (reportLog.msg + '' || '').substr(0, config.maxLength)
             // 重复上报
             if (isRepeat(reportLog, config.repeat)) continue
             const logStr = reportLog2String(reportLog, submitLogList.length, config)
