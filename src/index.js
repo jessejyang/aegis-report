@@ -247,6 +247,7 @@ export default class WardjsReport {
                     console.error(err)
                     return
                 }
+                console.log('offline logs length:', logs.length)
                 const reportData = { logs, msgObj, urlObj, startDate, endDate }
                 if (_this.deflate) {
                     loadPako().then(() => {
