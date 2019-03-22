@@ -1,6 +1,6 @@
 import { isOBJ, isEmpty, isRepeat, isOBJByType } from '../utils/index'
 import getOfflineDB from '../offline/index'
-import sendBadjs from '../report'
+import send from '../report'
 
 let submitLogList = []
 let comboTimeout = 0
@@ -15,7 +15,7 @@ const submitLog = function (config) {
     const _url = config._reportUrl + submitLogList.join('&') +
         '&count=' + submitLogList.length + '&_t=' + (+new Date())
 
-    sendBadjs(_url)
+    send(_url)
 
     comboTimeout = 0
     submitLogList = []
@@ -70,7 +70,7 @@ export default class Log {
             }
 
             // 有效保证字符不要过长
-            reportLog.msg = (reportLog.msg + '' || '').substr(0, 500)
+            reportLog.msg = (reportLog.msg + '' || '').substr(0, config.maxLength)
             // 重复上报
             if (isRepeat(reportLog, config.repeat)) continue
             const logStr = reportLog2String(reportLog, submitLogList.length, config)
@@ -101,7 +101,7 @@ export default class Log {
         }
     }
 
-    reportOffline ({ logs, startDate, endDate }) {
+    reportOffline ({ logs, msgObj, urlObj, startDate, endDate }) {
         let iframe = document.createElement('iframe')
         const { id, uin, url } = this.config
         const { userAgent } = navigator
@@ -110,6 +110,10 @@ export default class Log {
         iframe.height = 0
         iframe.width = 0
         iframe.src = 'javascript:false'
+        let data = JSON.stringify({ logs, msgObj, urlObj, userAgent, startDate, endDate, id, uin })
+        if (this.config.deflate && window.pako) {
+            data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
+        }
 
         iframe.onload = function () {
             const form = document.createElement('form')
@@ -121,7 +125,7 @@ export default class Log {
             input.style.display = 'none'
             input.type = 'hidden'
             input.name = 'offline_log'
-            input.value = JSON.stringify({ logs, userAgent, startDate, endDate, id, uin })
+            input.value = data
 
             iframe.contentDocument.body.appendChild(form)
             form.appendChild(input)

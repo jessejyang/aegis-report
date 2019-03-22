@@ -80,3 +80,27 @@ export function isRepeat (error, repeat) {
     const times = logMap[msg] = (parseInt(logMap[msg], 10) || 0) + 1
     return times > repeat
 }
+
+export function buildParam (obj) {
+    const str = []
+    for (const k in obj) {
+        if (obj.hasOwnProperty(k)) {
+            str.push(encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]))
+        }
+    }
+    return str.join('&')
+}
+
+export function loadPako () {
+    if (window.pako) {
+        return Promise.resolve()
+    }
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = 'https://pub.idqqimg.com/29ee73ea8c294fce8498cb50503521d4.js'
+        script.crossOrigin = 'anonymous'
+        script.onload = resolve
+        script.onerror = reject
+        document.getElementsByTagName('head')[0].appendChild(script)
+    })
+}

@@ -1,4 +1,4 @@
-export default function sendBadjs (url, data) {
+export default function send (url, data) {
     if (navigator.sendBeacon && typeof navigator.sendBeacon === 'function') {
         try {
             navigator.sendBeacon(url, data)

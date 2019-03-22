@@ -16,6 +16,7 @@
         offlineLog: true,
         offlineLogAuto: true,
         delay: 3000,
+        maxLength: 10000,
         onReport: function (bid, reportLog) {
             console.log(bid, reportLog);
         },
@@ -29,6 +30,7 @@
     wardjs.report('error')
     wardjs.addOfflineLog('offline log' + Date.now())
     wardjs.addOfflineLog('offline log' + Date.now())
+    WardjsReport.monitor('123123')
     // wardjs.reportOfflineLog()
 
 </script>

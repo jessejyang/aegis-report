@@ -66,10 +66,11 @@ const wardjs = new WardjsReport({
 | ignore | [] | 忽略某个错误, 支持 Regexp 和 Function |
 | random | 1 |  抽样 (0-1] 1-全量 |
 | delay | 1000 |  延迟上报时间 |
+| maxLength | 500 | 每条日志默认长度（不建议修改） |
 | submit | null |  自定义上报方式 |
 | repeat | 5 |  重复上报次数(对于同一个错误超过多少次不上报) |
 | offlineLog | false | 是否开启离线日志 |
-| offlineLogExp | 5 |  离线日志过期时间，默认5天 |
+| offlineLogExp | 3 |  离线日志过期时间，默认3天 |
 | offlineLogAuto | false | 是否自动询问服务器需要自动上报 |
 | onReport | function (bid, reportLog) {} | 与上报同时触发，用于统计相关内容 |
 | beforeReport | function (reportLog) {} | AOP：上报前执行，如果返回 false 则此条信息不上报 |
@@ -86,6 +87,13 @@ wardjs.addOfflineLog(msg)  // 增加离线日志
 wardjs.reportOfflineLog() // 上报离线日志
 ```
 
+### 自定义统计上报接口
+
+注意此方法为静态方法，使用 WardjsReport 调用。
+
+```javascript
+WardjsReport.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
+```
 
 ### 离线日志用法
 
@@ -113,6 +121,8 @@ const wardjs = new WardjsReport({
 
 再次回到 badjs 离线日志页面，在右边栏选择对应的离线日志即可预览了，日志的过滤条件（消息类型，关键词）依然有效。
 
+- 日志大小需要小于 10MB，根据测试，每条日志长度最大为 500，10000条日志的大小约为 600k，所以完全不用担心日志大小。超过 10MB 的日志服务器会返回 413。
+
 
 ## wardjs-report 原理
 
@@ -135,6 +145,8 @@ webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://gi
 **H5:**
 
 通过封装 IndexDB 存储用户全部日志，包括对日志的过期处理以及上传操作。具体实现可以查看 `src/Offline.js`。
+
+离线日志使用 [pako](https://github.com/nodeca/pako) 进行压缩，由于 pako 模块较大，因为默认不加载，通过按需加载的方式引用，只有上报离线日志的时候才异步加载。
 
 **微信小程序:**
 

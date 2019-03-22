@@ -82,16 +82,31 @@ export default class OfflineDB {
         const store = this.getStore()
         const request = store.openCursor()
         const result = []
+        const msgObj = {}
+        const msgList = []
+        const urlObj = {}
+        const urlList = []
+        let num = 0
+        let num1 = 0
         request.onsuccess = function (event) {
             const cursor = event.target.result
             if (cursor && cursor.value) {
                 if (cursor.value.time >= opt.start && cursor.value.time <= opt.end &&
                     equal(cursor.value.id, opt.id) && equal(cursor.value.uin, opt.uin)) {
-                    result.push(cursor.value)
+                    const { from, level, msg, time, version } = cursor.value
+                    if (typeof msgObj[msg] !== 'number') {
+                        msgList.push(msg)
+                        msgObj[msg] = num++
+                    }
+                    if (typeof urlObj[from] !== 'number') {
+                        urlList.push(from)
+                        urlObj[from] = num1++
+                    }
+                    result.push({ f: urlObj[from], l: level, m: msgObj[msg], t: time, v: version })
                 }
                 cursor.continue()
             } else {
-                callback(null, result)
+                callback(null, result, msgList, urlList)
             }
         }
 

@@ -1,6 +1,6 @@
 {
   "name": "wardjs-report",
-  "version": "0.0.13",
+  "version": "0.1.6",
   "description": "ivweb wardmonitor client report",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "prebuild": "rimraf dist",
     "build": "rollup -c",
     "build:web": "rollup -c --environment TARGET:web",
-    "build:wx": "rollup -c -w --environment TARGET:wx",
+    "build:wx": "rollup -c --environment TARGET:wx",
     "test": "babel-node test/index.js"
   },
   "dependencies": {},

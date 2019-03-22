@@ -1,7 +1,7 @@
 import getOfflineDB from './offline/index'
-import { isOBJ, isOBJByType, processStackMsg, processError, extend } from './utils/index'
+import { isOBJ, isOBJByType, processStackMsg, processError, extend, buildParam, loadPako } from './utils/index'
 import Log from './log/index'
-import sendBadjs from './report'
+import send from './report'
 
 let logList = []
 
@@ -15,11 +15,14 @@ const _config = {
     ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
     random: 1, // 抽样 (0-1] 1-全量
     delay: 1000, // 延迟上报
+    maxLength: 500, // 每条日志内容最大长度，通常不建议修改
     submit: null, // 自定义上报方式
+    monitorUrl: '//report.url.cn/report/report_vm', // 自定义统计上报地址
     repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: false,
-    offlineLogExp: 5, // 离线日志过期时间，默认5天
+    offlineLogExp: 3, // 离线日志过期时间，默认3天
     offlineLogAuto: false, // 是否自动询问服务器需要自动上报
+    deflate: false, // 是否使用压缩算法
     onReport: () => {
     }, // 与上报同时触发，用于统计相关内容
     beforeReport: () => {
@@ -63,7 +66,7 @@ export default class WardjsReport {
                 // '&from=' + encodeURIComponent(location.href) +
                 '&'
             // pv
-            sendBadjs(`${_config.url}/${id}`)
+            send(`${_config.url}/${id}`)
         }
         for (const key in _config) {
             this[key] = _config[key]
@@ -239,12 +242,20 @@ export default class WardjsReport {
                 end: endDate,
                 id: _this.id,
                 uin: _this.uin
-            }, function (err, logs) {
+            }, function (err, logs, msgObj, urlObj) {
                 if (err) {
                     console.error(err)
                     return
                 }
-                _this.log.reportOffline({ logs, startDate, endDate })
+                console.log('offline logs length:', logs.length)
+                const reportData = { logs, msgObj, urlObj, startDate, endDate }
+                if (_this.deflate) {
+                    loadPako().then(() => {
+                        _this.log.reportOffline(reportData)
+                    })
+                } else {
+                    _this.log.reportOffline(reportData)
+                }
             })
         })
     }
@@ -261,5 +272,29 @@ export default class WardjsReport {
             }
         }
         document.head.appendChild(script)
+    }
+
+    // 用于统计上报
+    static monitor (n, monitorUrl = '//report.url.cn/report/report_vm') {
+        // 如果n未定义或者为空，则不处理
+        if (typeof n === 'undefined' || n === '') {
+            return
+        }
+
+        // 如果n不是数组，则将其变成数组。注意这里判断方式不一定完美，却非常简单
+        if (typeof n.join === 'undefined') {
+            n = [n]
+        }
+
+        const p = {
+            monitors: '[' + n.join(',') + ']',
+            _: Math.random()
+        }
+
+        if (monitorUrl) {
+            let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p)
+
+            send(_url)
+        }
     }
 }
