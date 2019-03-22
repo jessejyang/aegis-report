@@ -16,7 +16,7 @@ export default class WardjsReport extends BaseReport {
     initError () {
         const _this = this
 
-        wx.onError(function (msg) {
+        wx.onError && wx.onError(function (msg) {
             let match = msg.match(/;at\s(\S*)\s/) || []
             let url = match.length >= 1 ? match[1] : ''
 
@@ -48,7 +48,7 @@ export default class WardjsReport extends BaseReport {
         if (autoReport) {
             setTimeout(() => {
                 this.reportOfflineLog()
-                wx.onAppShow(() => {
+                wx.onAppShow && wx.onAppShow(() => {
                     setTimeout(() => {
                         this.reportOfflineLog()
                     }, 5000)
