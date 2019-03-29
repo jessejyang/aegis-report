@@ -5,6 +5,7 @@
   },
   "globals": {
     "Image": true,
-    "location": true
+    "location": true,
+    "FormData": true
   }
 }
