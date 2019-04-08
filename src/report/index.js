@@ -1,43 +1,32 @@
+
 function beaconPollyfill (url, data, type) {
+    if (url.indexOf('http://') !== 0 || url.indexOf('https://') !== 0) {
+        url = location.protocol + url
+    }
     if (type === 'post') {
-        let iframe = document.createElement('iframe')
-        iframe.name = 'badjs_offline_' + (new Date() - 0)
-        iframe.frameborder = 0
-        iframe.height = 0
-        iframe.width = 0
-        iframe.src = 'javascript:false'
-
-        iframe.onload = function () {
-            const form = document.createElement('form')
-            form.style.display = 'none'
-            form.target = iframe.name
-            form.method = 'POST'
-            form.action = url + '/offlineLog'
-            const input = document.createElement('input')
-            input.style.display = 'none'
-            input.type = 'hidden'
-            input.name = 'offline_log'
-            input.value = data
-
-            iframe.contentDocument.body.appendChild(form)
-            form.appendChild(input)
-            form.submit()
-            console.log('report offline log success')
-            setTimeout(function () {
-                document.body.removeChild(iframe)
-                iframe = null
-            }, 5000)
-
-            iframe.onload = null
-        }
-        document.body.appendChild(iframe)
+        fetch(url, {
+            method: 'POST',
+            body: data,
+            headers: {
+                'Content-Type': 'application/json',
+                Referer: `https://now.qq.com/`
+            }
+        }).catch((err) => {
+            console.error(err)
+        })
     } else {
-        new Image().src = url
+        fetch(url, {
+            headers: {
+                Referer: `https://now.qq.com/`
+            }
+        }).catch((err) => {
+            console.error(err)
+        })
     }
 }
 
 export default function send (url, data, type) {
-    if (navigator.sendBeacon && typeof navigator.sendBeacon === 'function') {
+    if (navigator && navigator.sendBeacon && typeof navigator.sendBeacon === 'function') {
         try {
             if (type === 'post') {
                 const fd = new FormData()

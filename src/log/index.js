@@ -55,6 +55,10 @@ export default class Log {
         this.config = config
     }
 
+    changeUin (uin) {
+        this.config.uin = uin
+    }
+
     // 上报日志
     processLog (logList, immediately) {
         const config = this.config
@@ -86,7 +90,7 @@ export default class Log {
             }
             if (!isIgnore) {
                 const offline = getOfflineDB()
-                config.offlineLog && offline.save2Offline('badjs_' + config.id + config.uin, reportLog, config)
+                config.offlineLog && offline.save2Offline('badjs_' + config.id + config.uin + '_t_' + (new Date() - 0), reportLog, config)
                 if (!randomIgnore && reportLog.level !== 20) {
                     submitLogList.push(logStr[0])
                     config.onReport && (config.onReport(config.id, reportLog))
@@ -104,9 +108,8 @@ export default class Log {
     reportOffline (params) {
         const { id, uin, url } = this.config
         const { userAgent } = navigator
-
-        let data = JSON.stringify(Object.assign(params, { userAgent, id, uin }))
-        if (this.config.deflate && window.pako) {
+        let data = JSON.stringify({offline_log: Object.assign(params, { userAgent, id, uin })})
+        if (this.config.deflate && window && window.pako) {
             data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
         }
         const _url = url + '/offlineLog'

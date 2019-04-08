@@ -92,7 +92,7 @@ export function buildParam (obj) {
 }
 
 export function loadPako () {
-    if (window.pako) {
+    if (window && window.pako) {
         return Promise.resolve()
     }
     return new Promise((resolve, reject) => {

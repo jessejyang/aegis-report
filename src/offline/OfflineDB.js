@@ -1,72 +1,55 @@
-import { extend, equal } from '../utils/index'
+import { extend, equal } from '../utils/index';
+import { AsyncStorage } from '@tencent/hippy-react';
 
-let offlineBuffer = []
+let offlineBuffer = [];
 
 /**
  * 封装对 IndexDB 的读写操作
  */
 export default class OfflineDB {
-    constructor () {
-        this.db = null
+    constructor() {
+        this.db = null;
     }
 
-    getStore () {
-        const transaction = this.db.transaction('logs', 'readwrite')
-        return transaction.objectStore('logs')
-    }
+    ready(callback) {
 
-    ready (callback) {
-        const self = this
-        if (!window.indexedDB) {
-            return callback()
+        const self = this;
+        if (!AsyncStorage) {
+            return callback();
         }
 
-        if (this.db) {
+        if (AsyncStorage) {
             setTimeout(function () {
-                callback(null, self)
-            }, 0)
-            return
+                callback(null, self);
+            }, 0);
+            return;
         }
-        const version = 1
-        const request = window.indexedDB.open('badjs', version)
-
-        if (!request) {
-            return callback()
-        }
-
-        request.onerror = function (e) {
-            callback(e)
-            this.offlineLog = false
-            return true
-        }
-
-        request.onsuccess = function (e) {
-            self.db = e.target.result
-            setTimeout(function () {
-                callback(null, self)
-            }, 500)
-        }
-
-        request.onupgradeneeded = function (e) {
-            const db = e.target.result
-            if (!db.objectStoreNames.contains('logs')) {
-                db.createObjectStore('logs', { autoIncrement: true })
-            }
+    }
+    /**
+     * 根据key存储日志
+     * @param key
+     * @param log
+     */
+    insertToDB(key, log) {
+        if (typeof log === 'string') {
+            return AsyncStorage.setItem(key, log, (err) => {
+                console.error(err);
+            });
+        } else {
+            // 平均单条写入10字节1微秒
+            return AsyncStorage.setItem(key, JSON.stringify(log), (err) => {
+                console.error(err);
+            });
         }
     }
 
-    insertToDB (log) {
-        const store = this.getStore()
-        store.add(log)
-    }
-
-    addLogs (logs) {
-        if (!this.db) {
-            return
+    addLogs(logs) {
+        if (!AsyncStorage) {
+            return;
         }
 
         for (let i = 0; i < logs.length; i++) {
-            this.insertToDB(logs[i])
+            this.insertToDB(logs[i][0], logs[i][1]);
         }
     }
 
@@ -75,88 +58,129 @@ export default class OfflineDB {
      * @param opt
      * @param callback
      */
-    getLogs (opt, callback) {
-        if (!this.db) {
-            return
+    getLogs(opt, callback) {
+        if (!AsyncStorage) {
+            return;
         }
-        const store = this.getStore()
-        const request = store.openCursor()
-        const result = []
-        const msgObj = {}
-        const msgList = []
-        const urlObj = {}
-        const urlList = []
-        let num = 0
-        let num1 = 0
-        request.onsuccess = function (event) {
-            const cursor = event.target.result
-            if (cursor && cursor.value) {
-                if (cursor.value.time >= opt.start && cursor.value.time <= opt.end &&
-                    equal(cursor.value.id, opt.id) && equal(cursor.value.uin, opt.uin)) {
-                    const { from, level, msg, time, version } = cursor.value
-                    if (typeof msgObj[msg] !== 'number') {
-                        msgList.push(msg)
-                        msgObj[msg] = num++
+
+        // 平均单条读取在1微秒左右
+        AsyncStorage.getAllKeys().then((keys) => {
+            const result = [];
+            const msgObj = {};
+            const msgList = [];
+            const urlObj = {};
+            const urlList = [];
+            let num = 0;
+            let num1 = 0;
+
+            keys.forEach((key, index, array) => {
+                // 非badjs目标上报日志，则跳过
+                if (key.indexOf('badjs_' + opt.id) === -1) {
+                    if (index >= array.length - 1) {
+                        callback(null, result, msgList, urlList);
                     }
-                    if (typeof urlObj[from] !== 'number') {
-                        urlList.push(from)
-                        urlObj[from] = num1++
-                    }
-                    result.push({ f: urlObj[from], l: level, m: msgObj[msg], t: time, v: version })
+                    return;
                 }
-                cursor.continue()
-            } else {
-                callback(null, result, msgList, urlList)
-            }
-        }
 
-        request.onerror = function (e) {
-            callback(e)
-            return true
-        }
+                AsyncStorage.getItem(key, (err) => {
+                    console.error(err);
+                }).then((item) => {
+                    const value = JSON.parse(item);
+
+                    if (value) {
+                        // 上传所有用户的日志
+                        // if (value.time >= opt.start && value.time <= opt.end &&
+                        //     equal(value.id, opt.id) && equal(value.uin, opt.uin)) {
+                        if (value.time >= opt.start && value.time <= opt.end && equal(value.id, opt.id)) {
+                            const { from, level, msg, time, version } = value;
+                            if (typeof msgObj[msg] !== 'number') {
+                                msgList.push(msg);
+                                msgObj[msg] = num++;
+                            }
+                            if (typeof urlObj[from] !== 'number') {
+                                urlList.push(from);
+                                urlObj[from] = num1++;
+                            }
+                            result.push({ f: urlObj[from], l: level, m: msgObj[msg], t: time, v: version });
+                        }
+                    }
+
+                    if (index >= array.length - 1) {
+                        callback(null, result, msgList, urlList);
+                    }
+                });
+
+            });
+        });
     }
 
-    clearDB (daysToMaintain) {
-        if (!this.db) {
+    /**
+     * 根据截止时间去遍历清除日志
+     * @param daysToMaintain
+     */
+    clearDB(daysToMaintain) {
+        if (!AsyncStorage) {
             return
         }
 
-        const store = this.getStore()
         if (!daysToMaintain) {
-            store.clear()
-            return
+            return AsyncStorage.getAllKeys().then((keys) => {
+                keys.forEach((key) => {
+                    return AsyncStorage.removeItem(key)
+                })
+            })
         }
-        const range = (Date.now() - (daysToMaintain || 2) * 24 * 3600 * 1000)
-        const request = store.openCursor()
-        request.onsuccess = function (event) {
-            const cursor = event.target.result
-            if (cursor && (cursor.value.time < range || !cursor.value.time)) {
-                store.delete(cursor.primaryKey)
-                cursor.continue()
-            }
-        }
+
+        return AsyncStorage.getAllKeys().then((keys) => {
+
+            const range = (Date.now() - (daysToMaintain || 2) * 24 * 3600 * 1000)
+
+            keys.forEach((key) => {
+                // 非badjs日志跳过
+                if (key.indexOf('badjs_') === -1) {
+                    return
+                }
+
+                // 从key上取出记录时间，进行判断清除
+                const name = '_t_'
+                const time = parseInt(key.slice(key.indexOf(name) + name.length))
+                if (time >= range) {
+                    return
+                }
+                return AsyncStorage.removeItem(key);
+
+                // return AsyncStorage.getItem(key, (err) => {
+                //     console.error(err);
+                // }).then((item) => {
+                //     const value = JSON.parse(item);
+                //     if (value.time < range || !value.time) {
+                //         return AsyncStorage.removeItem(key);
+                //     }
+                // });
+            })
+        });
     }
 
-    save2Offline (key, msgObj, config) {
-        msgObj = extend({ id: config.id, uin: config.uin, time: new Date() - 0, version: config.version }, msgObj)
-        if (this.db) {
-            this.insertToDB(msgObj)
-            return
+    save2Offline(key, msgObj, config) {
+        msgObj = extend({ id: config.id, uin: config.uin, time: new Date() - 0, version: config.version }, msgObj);
+        if (AsyncStorage) {
+            this.insertToDB(key, msgObj);
+            return;
         }
 
-        if (!this.db && !offlineBuffer.length) {
+        if (!AsyncStorage && !offlineBuffer.length) {
             this.ready(function (err, DB) {
                 if (err) {
-                    console.error(err)
+                    console.error(err);
                 }
                 if (DB) {
                     if (offlineBuffer.length) {
-                        DB.addLogs(offlineBuffer)
-                        offlineBuffer = []
+                        DB.addLogs(offlineBuffer);
+                        offlineBuffer = [];
                     }
                 }
-            })
+            });
         }
-        offlineBuffer.push(msgObj)
+        offlineBuffer.push([key, msgObj]);
     }
 }

@@ -30,14 +30,19 @@ const _config = {
     } // aop：上报前执行，如果返回 false 则不上报
 }
 
+
 export default class WardjsReport {
     constructor (props) {
-        this._initConfig(props)
+        // this._init()
+        this.props = props
+    }
+
+    _init () {
+        this._initConfig(this.props)
         this.log = new Log(_config)
         if (this.offlineLog) {
             this._initOffline()
         }
-        this._initError()
     }
 
     // 初始化参数
@@ -54,7 +59,7 @@ export default class WardjsReport {
                     _config.url = '//now.qq.com/badjs'
                 }
 
-                if (!_config.uin) {
+                if (document && document.cookie && !_config.uin) {
                     _config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
                 }
             }
@@ -91,41 +96,6 @@ export default class WardjsReport {
         return this
     }
 
-    // 初始化错误
-    _initError () {
-        const orgError = window.onerror
-        const _this = this
-        // rewrite window.oerror
-        window.onerror = function (msg, url, line, col, error) {
-            let newMsg = msg
-
-            if (error && error.stack) {
-                newMsg = processStackMsg(error)
-            }
-
-            if (isOBJByType(newMsg, 'Event')) {
-                newMsg += newMsg.type
-                    ? ('--' + newMsg.type + '--' + (newMsg.target
-                        ? (newMsg.target.tagName + '::' + newMsg.target.src) : '')) : ''
-            }
-
-            _this._push({
-                msg: newMsg,
-                target: url,
-                rowNum: line,
-                colNum: col,
-                _orgMsg: msg
-            })
-
-            orgError && orgError.apply(window, arguments)
-        }
-
-        // badjs 系统查看错误使用
-        typeof console !== 'undefined' && console.error && setTimeout(function () {
-            const err = ((location.hash || '').match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2]
-            err && console.error('BJ_ERROR', decodeURIComponent(err).replace(/(:\d+:\d+)\s*/g, '$1\n'))
-        }, 0)
-    }
 
     // 处理log
     _processLog (immediately = false) {
@@ -166,7 +136,11 @@ export default class WardjsReport {
         this._processLog(immediately)
         return this
     }
-
+    changeUin (uin) {
+        this.uin = uin
+        this.props.uin = uin
+        this.log.changeUin(uin)
+    }
     // 上报错误事件
     report (msg, isReportNow) {
         msg && this._push(msg, isReportNow)
@@ -226,10 +200,6 @@ export default class WardjsReport {
 
     // 上报离线日志
     reportOfflineLog () {
-        if (!window.indexedDB) {
-            this.info('unsupport offlineLog')
-            return
-        }
         const _this = this
         this.offlineDB.ready(function (err, DB) {
             if (err || !DB) {
@@ -247,7 +217,6 @@ export default class WardjsReport {
                     console.error(err)
                     return
                 }
-                console.log('offline logs length:', logs.length)
                 const reportData = { logs, msgObj, urlObj, startDate, endDate }
                 if (_this.deflate) {
                     loadPako().then(() => {
@@ -263,15 +232,19 @@ export default class WardjsReport {
     // 询问服务器是否上报离线日志
     _autoReportOffline () {
         const _this = this
-        const script = document.createElement('script')
-        script.src = `${this.url}/offlineAuto?id=${this.id}&uin=${this.uin}`
-        // 通过 script 的返回值执行回调
-        window._badjsOfflineAuto = function (isReport) {
-            if (isReport) {
-                _this.reportOfflineLog()
+        fetch(`https:${this.url}/mpOfflineAuto?id=${this.id}&uin=${this.uin}`).then((resp) => {
+            const code = resp.status;
+
+            if (code !== 200) {
+                return reject({ code: code, err_msg: 'Inner_Network_Error: ' + code });
             }
-        }
-        document.head.appendChild(script)
+
+            const body = JSON.parse(resp.body);
+            if (body.msg) {
+                _this.reportOfflineLog();
+            }
+        })
+        // _this.reportOfflineLog();
     }
 
     // 用于统计上报
@@ -298,3 +271,22 @@ export default class WardjsReport {
         }
     }
 }
+
+export const wardjs = new WardjsReport({
+    url: '//now.qq.com/badjs',
+    id: 525,
+    // url: '//10.65.94.86:3000/offline',
+    uin: 111111,
+    version: 3,
+    offlineLog: true,
+    offlineLogAuto: true,
+    delay: 3000,
+    maxLength: 10000,
+    onReport: function (bid, reportLog) {
+        console.log(bid, reportLog);
+    },
+    beforeReport: function (reportLog) {
+        console.log(reportLog)
+        return true
+    }
+})
