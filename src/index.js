@@ -225,7 +225,7 @@ export default class WardjsReport {
     }
 
     // 上报离线日志
-    reportOfflineLog () {
+    reportOfflineLog (secretKey) {
         if (!window.indexedDB) {
             this.info('unsupport offlineLog')
             return
@@ -248,7 +248,7 @@ export default class WardjsReport {
                     return
                 }
                 console.log('offline logs length:', logs.length)
-                const reportData = { logs, msgObj, urlObj, startDate, endDate }
+                const reportData = { logs, msgObj, urlObj, startDate, endDate, secretKey }
                 if (_this.deflate) {
                     loadPako().then(() => {
                         _this.log.reportOffline(reportData)
@@ -266,9 +266,9 @@ export default class WardjsReport {
         const script = document.createElement('script')
         script.src = `${this.url}/offlineAuto?id=${this.id}&uin=${this.uin}`
         // 通过 script 的返回值执行回调
-        window._badjsOfflineAuto = function (isReport) {
-            if (isReport) {
-                _this.reportOfflineLog()
+        window._badjsOfflineAuto = function (secretKey) {
+            if (secretKey) {
+                _this.reportOfflineLog(secretKey)
             }
         }
         document.head.appendChild(script)
