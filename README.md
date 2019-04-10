@@ -73,7 +73,6 @@ wardjs.report(msg, true) // 上报错误事件，true 表示立即上报
 wardjs.info(msg) // 上报 info 事件
 wardjs.debug(msg) // 上报 debug 事件
 wardjs.addOfflineLog(msg)  // 增加离线日志
-wardjs.reportOfflineLog() // 上报离线日志
 ```
 
 ### 自定义统计上报接口
