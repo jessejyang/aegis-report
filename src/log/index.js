@@ -107,8 +107,9 @@ export default class Log {
 
     reportOffline (params) {
         const { id, uin, url } = this.config
-        const { userAgent } = navigator
-        let data = JSON.stringify({offline_log: Object.assign(params, { userAgent, id, uin })})
+        // const { userAgent } = navigator
+        // let data = JSON.stringify({offline_log: Object.assign(params, { userAgent, id, uin })})
+        let data = JSON.stringify({offline_log: Object.assign(params, { id, uin })})
         if (this.config.deflate && window && window.pako) {
             data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
         }

@@ -1,7 +1,7 @@
 
 function beaconPollyfill (url, data, type) {
     if (url.indexOf('http://') !== 0 || url.indexOf('https://') !== 0) {
-        url = location.protocol + url
+        url = 'http:' + url
     }
     if (type === 'post') {
         fetch(url, {
@@ -26,19 +26,5 @@ function beaconPollyfill (url, data, type) {
 }
 
 export default function send (url, data, type) {
-    if (navigator && navigator.sendBeacon && typeof navigator.sendBeacon === 'function') {
-        try {
-            if (type === 'post') {
-                const fd = new FormData()
-                fd.append('offline_log', data)
-                navigator.sendBeacon(url, fd)
-            } else {
-                navigator.sendBeacon(url, data)
-            }
-        } catch (e) {
-            beaconPollyfill(url, data, type)
-        }
-    } else {
-        beaconPollyfill(url, data, type)
-    }
+    beaconPollyfill(url, data, type)
 }

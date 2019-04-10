@@ -1,5 +1,6 @@
 import { extend, equal } from '../utils/index';
 import { AsyncStorage } from '@tencent/hippy-react';
+import { QBDeviceModule } from '@tencent/hippy-react-qb';
 
 let offlineBuffer = [];
 
@@ -134,6 +135,8 @@ export default class OfflineDB {
         return AsyncStorage.getAllKeys().then((keys) => {
 
             const range = (Date.now() - (daysToMaintain || 2) * 24 * 3600 * 1000)
+            // 手动删除所有存储的数据
+            // const range = Date.now()
 
             keys.forEach((key) => {
                 // 非badjs日志跳过
@@ -161,7 +164,7 @@ export default class OfflineDB {
         });
     }
 
-    save2Offline(key, msgObj, config) {
+    save2OfflineHandler(key, msgObj, config) {
         msgObj = extend({ id: config.id, uin: config.uin, time: new Date() - 0, version: config.version }, msgObj);
         if (AsyncStorage) {
             this.insertToDB(key, msgObj);
@@ -182,5 +185,22 @@ export default class OfflineDB {
             });
         }
         offlineBuffer.push([key, msgObj]);
+    }
+
+    save2Offline(key, msgObj, config) {
+        if (QBDeviceModule) {
+            QBDeviceModule.getDeviceInfo().then((deviceInfo) => {
+
+                if (typeof msgObj.msg === 'string') {
+                    msgObj.msg = JSON.stringify(extend(deviceInfo, {msg: msgObj.msg}))
+                } else {
+                    msgObj.msg = JSON.stringify(extend(deviceInfo, msgObj.msg))
+                }
+
+                this.save2OfflineHandler(key, msgObj, config)
+            });
+        } else {
+            this.save2OfflineHandler(key, msgObj, config)
+        }
     }
 }

@@ -37,8 +37,8 @@ export default class WardjsReport {
         this.props = props
     }
 
-    _init () {
-        this._initConfig(this.props)
+    _init (params) {
+        this._initConfig(extend(this.props, params))
         this.log = new Log(_config)
         if (this.offlineLog) {
             this._initOffline()
@@ -54,15 +54,15 @@ export default class WardjsReport {
         }
         const id = parseInt(_config.id, 10)
         if (id) {
-            if (/qq\.com$/gi.test(location.hostname)) {
-                if (!_config.url) {
-                    _config.url = '//now.qq.com/badjs'
-                }
-
-                if (document && document.cookie && !_config.uin) {
-                    _config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
-                }
-            }
+            // if (/qq\.com$/gi.test(location.hostname)) {
+            //     if (!_config.url) {
+            //         _config.url = '//now.qq.com/badjs'
+            //     }
+            //
+            //     if (document && document.cookie && !_config.uin) {
+            //         _config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
+            //     }
+            // }
 
             _config._reportUrl = (_config.url || '//now.qq.com/badjs') +
                 '?id=' + id +
@@ -118,7 +118,7 @@ export default class WardjsReport {
         // 在错误发生时获取页面链接
         // https://github.com/BetterJS/badjs-report/issues/19
         if (!data.from) {
-            data.from = location.href
+            data.from = this.from || 'qb://ext/nolive'
         }
 
         if (data._orgMsg) {
@@ -286,7 +286,6 @@ export const wardjs = new WardjsReport({
         console.log(bid, reportLog);
     },
     beforeReport: function (reportLog) {
-        console.log(reportLog)
         return true
     }
 })
