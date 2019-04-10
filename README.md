@@ -4,16 +4,18 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/iv-web/wardjs-report/pulls)
 
 
-## wardjs-report
+## wardjs-hippy-report
 
-wardmonitor 日志上报:
+仅用于QQ浏览器的hippy环境中
 
-错误日志收集，实时日志监控，离线日志统计，前端性能监控 - 基于 badjs 升级的 wardjs-report 给你一站式前端日志监控体验。
+wardmonitor hippy离线日志上报:
+
+离线日志统计 - 基于 badjs 升级的 wardjs-hippy-report 给你一站式hippy前端日志监控体验。
 
 ## Install 
 
 ```shell
-$ npm install wardjs-report
+$ npm install wardjs-hippy-report
 ```
 
 ## Getting started
@@ -21,11 +23,11 @@ $ npm install wardjs-report
 - npm
 
 ```javascript
-import WardjsReport from 'wardjs-report'
+import WardjsReport from 'wardjs-hippy-report'
 
 const wardjs = new WardjsReport({id: 1})
 
-wardjs.report('error msg') // 主动上报
+wardjs.addOfflineLog('error msg') // 保存离线日志
 ```
 
 - browser
@@ -33,10 +35,27 @@ wardjs.report('error msg') // 主动上报
 ```javascript
 const WardjsReport = window['wardjs-report'].default
 const wardjs = new WardjsReport({
-    id: 1,
-    uin: '380034641',
+    id: 0, // 上报 id
+    uin: 0, // user id
+    url: '//now.qq.com/badjs', // 上报接口
+    version: 0,
+    ext: null, // 扩展参数 用于自定义上报
+    level: 4, // 错误级别 1-debug 2-info 4-error
+    ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
+    random: 1, // 抽样 (0-1] 1-全量
+    delay: 1000, // 延迟上报
+    maxLength: 500, // 每条日志内容最大长度，通常不建议修改
+    submit: null, // 自定义上报方式
+    monitorUrl: '//report.url.cn/report/report_vm', // 自定义统计上报地址
+    repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
     offlineLog: true,
-    offlineLogAuto: true
+    offlineLogExp: 3, // 离线日志过期时间，默认3天
+    offlineLogAuto: true, // 是否自动询问服务器需要自动上报
+    onReport: () => {
+    }, // 与上报同时触发，用于统计相关内容
+    beforeReport: () => {
+        return true
+    } // aop：上报前执行，如果返回 false 则不上报
 })
 ```
 
@@ -58,9 +77,9 @@ const wardjs = new WardjsReport({
 | maxLength | 500 | 每条日志默认长度（不建议修改） |
 | submit | null |  自定义上报方式 |
 | repeat | 5 |  重复上报次数(对于同一个错误超过多少次不上报) |
-| offlineLog | false | 是否开启离线日志 |
+| offlineLog | true | 是否开启离线日志 |
 | offlineLogExp | 3 |  离线日志过期时间，默认3天 |
-| offlineLogAuto | false | 是否自动询问服务器需要自动上报 |
+| offlineLogAuto | true | 是否自动询问服务器需要自动上报 |
 | onReport | function (bid, reportLog) {} | 与上报同时触发，用于统计相关内容 |
 | beforeReport | function (reportLog) {} | AOP：上报前执行，如果返回 false 则此条信息不上报 |
 
@@ -69,24 +88,13 @@ const wardjs = new WardjsReport({
 
 
 ```javascript
-wardjs.report(msg, true) // 上报错误事件，true 表示立即上报
-wardjs.info(msg) // 上报 info 事件
-wardjs.debug(msg) // 上报 debug 事件
 wardjs.addOfflineLog(msg)  // 增加离线日志
-wardjs.reportOfflineLog() // 上报离线日志 - 请不要在代码中主动上报离线日志
 ```
 
-### 自定义统计上报接口
-
-注意此方法为静态方法，使用 WardjsReport 调用。
-
-```javascript
-WardjsReport.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
-```
 
 ### 离线日志用法
 
-- 首先开启离线日志
+- 首先生成实例对象，开启离线日志, 默认已开启
 
 ```javascript
 const wardjs = new WardjsReport({
@@ -115,34 +123,13 @@ const wardjs = new WardjsReport({
 
 ## wardjs-report 原理
 
-### window.onerror 
-
-关于错误处理的部分是通过重新 window.onerror 实现的，记得在 script 中添加跨域脚本 crossorigin="anonymous" 以帮助 wardjs 捕获错误。
-
-```html
-<script type="text/javascript" src="//s.url.cn/aaa.js" crossorigin="anonymous"></script>
-```
-
-webpack 打包的项目可以使用 [html-webpack-plugin-crossorigin](https://github.com/liyincheng/html-webpack-inject-attributes-plugin)。
-
 ### 离线日志
 
-通过封装 IndexDB 存储用户全部日志，包括对日志的过期处理以及上传操作。具体实现可以查看 `src/Offline.js`。
-
-离线日志使用 [pako](https://github.com/nodeca/pako) 进行压缩，由于 pako 模块较大，因为默认不加载，通过按需加载的方式引用，只有上报离线日志的时候才异步加载。
+通过封装hippy提供的 AsyncStorage 存储用户全部日志，包括对日志的过期处理以及上传操作。具体实现可以查看 `src/Offline.js`。
 
 ### 延迟上报
 
 默认时间为 1s，延迟上报可以理解为函数节流，将多次上报合为一次上报。
-
-### 前端性能监控
-
-前端性能监控使用 [performance.timing](https://developer.mozilla.org/zh-CN/docs/Web/API/Performance)。// @todo
-
-## 数据上报
-
-默认使用 [navigator.sendBeacon](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon) 上报数据，异步上报，不会因浏览器页面的卸载而影响上报数据，对于不兼容 sendBeacon 的浏览器，使用 Image 上报的方式。
-
 
 ## Build
 
