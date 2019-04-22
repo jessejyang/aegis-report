@@ -199,7 +199,7 @@ export default class WardjsReport {
     }
 
     // 上报离线日志
-    reportOfflineLog () {
+    reportOfflineLog (secretKey) {
         const _this = this
         this.offlineDB.ready(function (err, DB) {
             if (err || !DB) {
@@ -217,7 +217,7 @@ export default class WardjsReport {
                     console.error(err)
                     return
                 }
-                const reportData = { logs, msgObj, urlObj, startDate, endDate }
+                const reportData = { logs, msgObj, urlObj, startDate, endDate, secretKey }
                 if (_this.deflate) {
                     loadPako().then(() => {
                         _this.log.reportOffline(reportData)
@@ -240,8 +240,8 @@ export default class WardjsReport {
             }
 
             const body = JSON.parse(resp.body);
-            if (body.msg) {
-                _this.reportOfflineLog();
+            if (body.msg && body.secretKey) {
+                _this.reportOfflineLog(body.secretKey);
             }
         })
         // _this.reportOfflineLog();
