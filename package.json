@@ -4,7 +4,7 @@
   "description": "ivweb wardmonitor client report",
   "main": "dist/index.js",
   "scripts": {
-    "publish": "npm version patch",
+    "publish": "npm version patch && npm publish",
     "prebuild": "rimraf dist",
     "build": "rollup -c",
     "dev": "rollup -c -w",
