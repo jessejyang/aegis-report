@@ -67,6 +67,8 @@ export default class WardjsReport {
                 '&'
             // pv
             send(`${_config.url}/${id}`)
+        } else {
+            console.warn('please check badjsid!!!')
         }
         for (const key in _config) {
             this[key] = _config[key]
