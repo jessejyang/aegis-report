@@ -8,7 +8,7 @@ let logList = []
 const _config = {
     id: 0, // 上报 id
     uin: 0, // user id
-    url: '//now.qq.com/badjs', // 上报接口
+    url: '//aegis.qq.com/badjs', // 上报接口
     version: 0,
     ext: null, // 扩展参数 用于自定义上报
     level: 4, // 错误级别 1-debug 2-info 4-error
@@ -22,7 +22,6 @@ const _config = {
     offlineLog: false,
     offlineLogExp: 3, // 离线日志过期时间，默认3天
     offlineLogAuto: false, // 是否自动询问服务器需要自动上报
-    deflate: false, // 是否使用压缩算法
     onReport: () => {
     }, // 与上报同时触发，用于统计相关内容
     beforeReport: () => {
@@ -51,7 +50,7 @@ export default class WardjsReport {
         if (id) {
             if (/qq\.com$/gi.test(location.hostname)) {
                 if (!_config.url) {
-                    _config.url = '//now.qq.com/badjs'
+                    _config.url = '//aegis.qq.com/badjs'
                 }
 
                 if (!_config.uin) {
@@ -59,14 +58,14 @@ export default class WardjsReport {
                 }
             }
 
-            _config._reportUrl = (_config.url || '//now.qq.com/badjs') +
+            _config._reportUrl = (_config.url || '//aegis.qq.com/badjs') +
                 '?id=' + id +
                 '&uin=' + _config.uin +
                 '&version=' + _config.version +
                 // '&from=' + encodeURIComponent(location.href) +
                 '&'
             // pv
-            send(`${_config.url}/${id}`)
+            new Image().src = `${_config.url}/${id}`
         } else {
             console.warn('please check badjsid!!!')
         }
@@ -251,13 +250,7 @@ export default class WardjsReport {
                 }
                 console.log('offline logs length:', logs.length)
                 const reportData = { logs, msgObj, urlObj, startDate, endDate, secretKey }
-                if (_this.deflate) {
-                    loadPako().then(() => {
-                        _this.log.reportOffline(reportData)
-                    })
-                } else {
-                    _this.log.reportOffline(reportData)
-                }
+                _this.log.reportOffline(reportData)
             })
         })
     }

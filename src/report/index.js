@@ -1,5 +1,9 @@
-function beaconPollyfill (url, data, type) {
-    if (type === 'post') {
+export function sendOffline (url, data) {
+    if (navigator.sendBeacon && typeof navigator.sendBeacon === 'function') {
+        const fd = new FormData()
+        fd.append('offline_log', data)
+        navigator.sendBeacon(url, fd)
+    } else {
         let iframe = document.createElement('iframe')
         iframe.name = 'badjs_offline_' + (new Date() - 0)
         iframe.frameborder = 0
@@ -31,21 +35,13 @@ function beaconPollyfill (url, data, type) {
             iframe.onload = null
         }
         document.body.appendChild(iframe)
-    } else {
-        new Image().src = url
     }
 }
 
-export default function send (url, data, type) {
+export default function send (url, data) {
     if (navigator.sendBeacon && typeof navigator.sendBeacon === 'function') {
-        if (type === 'post') {
-            const fd = new FormData()
-            fd.append('offline_log', data)
-            navigator.sendBeacon(url, fd)
-        } else {
-            navigator.sendBeacon(url, data)
-        }
+        navigator.sendBeacon(url, data)
     } else {
-        beaconPollyfill(url, data, type)
+        new Image().src = url
     }
 }

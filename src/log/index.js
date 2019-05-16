@@ -1,6 +1,6 @@
 import { isOBJ, isEmpty, isRepeat, isOBJByType } from '../utils/index'
 import getOfflineDB from '../offline/index'
-import send from '../report'
+import send, { sendOffline } from '../report'
 
 let submitLogList = []
 let comboTimeout = 0
@@ -106,11 +106,8 @@ export default class Log {
         const { userAgent } = navigator
 
         let data = JSON.stringify(Object.assign(params, { userAgent, id, uin }))
-        if (this.config.deflate && window.pako) {
-            data = encodeURIComponent(window.pako.deflate(data, { to: 'string' }))
-        }
         const _url = url + '/offlineLog'
 
-        send(_url, data, 'post')
+        sendOffline(_url, data)
     }
 }
