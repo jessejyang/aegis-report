@@ -1,7 +1,7 @@
 {
-  "name": "wardjs-report",
+  "name": "aegis-report",
   "version": "0.1.18",
-  "description": "ivweb wardmonitor client report",
+  "description": "ivweb aegis client report",
   "main": "dist/index.js",
   "scripts": {
     "publish": "npm version patch",
@@ -30,14 +30,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iv-web/wardjs-report.git"
+    "url": "git+https://github.com/iv-web/aegis-report.git"
   },
   "keywords": [
     "frontend-report",
     "frontend-performance"
   ],
   "bugs": {
-    "url": "https://github.com/iv-web/wardjs-report/issues"
+    "url": "https://github.com/iv-web/aegis-report/issues"
   },
   "author": "tickli@tencent.com",
   "license": "MIT"

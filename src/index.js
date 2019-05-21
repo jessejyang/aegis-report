@@ -29,7 +29,7 @@ const _config = {
     } // aop：上报前执行，如果返回 false 则不上报
 }
 
-export default class WardjsReport {
+export default class AegisReport {
     constructor (props) {
         this._initConfig(props)
         this.log = new Log(_config)

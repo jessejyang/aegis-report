@@ -1,19 +1,19 @@
-[![NPM version](https://img.shields.io/npm/v/wardjs-report.svg?style=flat)](https://www.npmjs.org/package/wardjs-report)
-[![npm download](https://img.shields.io/npm/dm/wardjs-report.svg?style=flat-square)](https://npmjs.org/package/wardjs-report)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/iv-web/wardjs-report/blob/master/LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/iv-web/wardjs-report/pulls)
+[![NPM version](https://img.shields.io/npm/v/aegis-report.svg?style=flat)](https://www.npmjs.org/package/aegis-report)
+[![npm download](https://img.shields.io/npm/dm/aegis-report.svg?style=flat-square)](https://npmjs.org/package/aegis-report)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/iv-web/aegis-report/blob/master/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/iv-web/aegis-report/pulls)
 
 
-## wardjs-report
+## aegis-report
 
-wardmonitor 日志上报:
+aegis 日志上报:
 
-错误日志收集，实时日志监控，离线日志统计，前端性能监控 - 基于 badjs 升级的 wardjs-report 给你一站式前端日志监控体验。
+错误日志收集，实时日志监控，离线日志统计，前端性能监控 - 基于 badjs 升级的 aegis-report 给你一站式前端日志监控体验。
 
 ## Install 
 
 ```shell
-$ npm install wardjs-report
+$ npm install aegis-report
 ```
 
 ## Getting started
@@ -21,18 +21,18 @@ $ npm install wardjs-report
 - npm
 
 ```javascript
-import WardjsReport from 'wardjs-report'
+import AegisReport from 'aegis-report'
 
-const wardjs = new WardjsReport({id: 1})
+const aegis = new AegisReport({id: 1})
 
-wardjs.report('error msg') // 主动上报
+aegis.report('error msg') // 主动上报
 ```
 
 - browser
 
 ```javascript
-const WardjsReport = window['wardjs-report'].default
-const wardjs = new WardjsReport({
+const AegisReport = window['aegis-report'].default
+const aegis = new AegisReport({
     id: 1,
     uin: '380034641',
     offlineLog: true,
@@ -69,18 +69,18 @@ const wardjs = new WardjsReport({
 
 
 ```javascript
-wardjs.report(msg, true) // 上报错误事件，true 表示立即上报
-wardjs.info(msg) // 上报 info 事件
-wardjs.debug(msg) // 上报 debug 事件
-wardjs.addOfflineLog(msg)  // 增加离线日志
+aegis.report(msg, true) // 上报错误事件，true 表示立即上报
+aegis.info(msg) // 上报 info 事件
+aegis.debug(msg) // 上报 debug 事件
+aegis.addOfflineLog(msg)  // 增加离线日志
 ```
 
 ### 自定义统计上报接口
 
-注意此方法为静态方法，使用 WardjsReport 调用。
+注意此方法为静态方法，使用 AegisReport 调用。
 
 ```javascript
-WardjsReport.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
+AegisReport.monitor(123) // 自定义统计上报接口，默认地址为 `//report.url.cn/report/report_vm`
 ```
 
 ### 离线日志用法
@@ -88,7 +88,7 @@ WardjsReport.monitor(123) // 自定义统计上报接口，默认地址为 `//re
 - 首先开启离线日志
 
 ```javascript
-const wardjs = new WardjsReport({
+const aegis = new AegisReport({
     id: 1,
     offlineLog: true,
     offlineLogAuto: true
@@ -112,11 +112,11 @@ const wardjs = new WardjsReport({
 - 日志大小需要小于 10MB，根据测试，每条日志长度最大为 500，10000条日志的大小约为 600k，所以完全不用担心日志大小。超过 10MB 的日志服务器会返回 413。
 
 
-## wardjs-report 原理
+## aegis-report 原理
 
 ### window.onerror 
 
-关于错误处理的部分是通过重新 window.onerror 实现的，记得在 script 中添加跨域脚本 crossorigin="anonymous" 以帮助 wardjs 捕获错误。
+关于错误处理的部分是通过重新 window.onerror 实现的，记得在 script 中添加跨域脚本 crossorigin="anonymous" 以帮助 aegis 捕获错误。
 
 ```html
 <script type="text/javascript" src="//s.url.cn/aaa.js" crossorigin="anonymous"></script>

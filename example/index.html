@@ -7,8 +7,8 @@
 </head>
 <body>
 <script>
-    const WardjsReport = window['wardjs-report'].default
-    const wardjs = new WardjsReport({
+    const AegisReport = window['aegis-report'].default
+    const aegis = new AegisReport({
         url: '//aegis.qq.com/badjs',
         id: 453,
         version: 3,
@@ -25,12 +25,12 @@
             return true
         }
     })
-    wardjs.info('info')
-    wardjs.debug('debug')
-    wardjs.report('error')
-    wardjs.addOfflineLog('offline log' + Date.now())
-    wardjs.addOfflineLog('offline log' + Date.now())
-    WardjsReport.monitor('123123')
+    aegis.info('info')
+    aegis.debug('debug')
+    aegis.report('error')
+    aegis.addOfflineLog('offline log' + Date.now())
+    aegis.addOfflineLog('offline log' + Date.now())
+    AegisReport.monitor('123123')
 
 </script>
 
