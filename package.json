@@ -1,6 +1,6 @@
 {
   "name": "aegis-report",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "ivweb aegis client report",
   "main": "dist/index.js",
   "scripts": {
