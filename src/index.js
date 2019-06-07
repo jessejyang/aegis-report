@@ -289,7 +289,7 @@ export default class AegisReport {
         if (monitorUrl) {
             let _url = monitorUrl + (monitorUrl.match(/\?/) ? '&' : '?') + buildParam(p)
 
-            send(_url)
+            new Image().src = _url
         }
     }
 }
